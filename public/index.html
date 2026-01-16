@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Technical Analysis Chat</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f1419; color: #fff; }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 { font-size: 28px; margin-bottom: 5px; }
+        header p { opacity: 0.9; }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            space: 10px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #667eea;
+            margin-left: auto;
+            color: white;
+        }
+
+        .message.bot {
+            background: #2a2f3f;
+            color: #e0e0e0;
+            border-left: 3px solid #667eea;
+        }
+
+        .message.error {
+            background: #ff4757;
+            color: white;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: #1a1f2e;
+            border-top: 1px solid #2a2f3f;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #2a2f3f;
+            border-radius: 6px;
+            background: #2a2f3f;
+            color: white;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Solana Technical Analysis Chat</h1>
+            <p>Análisis conversacional de precios Solana (Educativo)</p>
+        </header>
+
+        <div class="chat-container">
+            <div id="messages" class="messages"></div>
+            
+            <div class="input-area">
+                <input 
+                    type="text" 
+                    id="prompt" 
+                    placeholder="Ej: 'Muestra RSI últimos 14 días'"
+                    autocomplete="off"
+                >
+                <button onclick="sendPrompt()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+
+        async function sendPrompt() {
+            const promptInput = document.getElementById('prompt');
+            const messagesDiv = document.getElementById('messages');
+            const prompt = promptInput.value.trim();
+
+            if (!prompt) return;
+
+            // Mostrar mensaje del usuario
+            messagesDiv.innerHTML += `<div class="message user"><strong>Tú:</strong> ${escapeHtml(prompt)}</div>`;
+            promptInput.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const message = result.response?.message || `Análisis: ${JSON.stringify(result.analysis)}`;
+                    messagesDiv.innerHTML += `<div class="message bot"><strong>Bot:</strong> ${escapeHtml(message)}</div>`;
+                    
+                    if (result.metadata) {
+                        const meta = `<small style="opacity: 0.7;">📊 ${result.metadata.recordsAnalyzed} registros | 🎯 ${result.metadata.intent}</small>`;
+                        messagesDiv.innerHTML += `<div class="message bot">${meta}</div>`;
+                    }
+                } else {
+                    const errorMsg = result.error?.message || 'Error desconocido';
+                    messagesDiv.innerHTML += `<div class="message error"><strong>Error:</strong> ${escapeHtml(errorMsg)}</div>`;
+                }
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                messagesDiv.innerHTML += `<div class="message error"><strong>Error:</strong> ${escapeHtml(error.message)}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        document.getElementById('prompt').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendPrompt();
+        });
+
+        // Mensaje de bienvenida
+        window.addEventListener('load', () => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = `<div class="message bot">
+                <strong>Bot:</strong> ¡Hola! Soy tu asistente de análisis técnico. 
+                Puedo ayudarte con:<br/>
+                • "RSI últimos 14 días"<br/>
+                • "SMA últimos 30 días"<br/>
+                • "Volumen en 2023"<br/>
+                • "Volatilidad últimas 2 semanas"<br/>
+                ¿Qué quieres analizar?
+            </div>`;
+        });
+    </script>
+</body>
+</html>

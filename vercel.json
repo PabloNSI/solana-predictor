@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "buildCommand": "npm install",
+  "outputDirectory": "public",
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 30,
+      "includeFiles": "api/data/**"
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/chat",
+      "destination": "/chat.html"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "solana-predictor-backend",
+  "version": "1.0.0",
+  "description": "Backend modular Serverless para análisis y predicción de precios Solana",
+  "author": "Your Name",
+  "license": "MIT",
+  "main": "api/v1/chat.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "npm install",
+    "start": "vercel dev",
+    "test": "node tests/test-indicators.js",
+    "lint": "echo 'Linting not configured'"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "papaparse": "^5.5.3"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
