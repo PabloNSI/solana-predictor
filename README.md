@@ -50,7 +50,7 @@ streamlit run app.py
 
 ## 📊 Estructura del Proyecto
 
-``
+```bash
 solana-predictor/
 ├── app.py                    # Aplicación Streamlit
 ├── src/
@@ -70,7 +70,7 @@ solana-predictor/
 │   └── sol_1d_data_2020_to_2025.csv
 ├── TECHNICAL_REPORT.md      # Memoria académica
 └── requirements.txt
-``
+```
 
 ## 📈 Resultados
 
