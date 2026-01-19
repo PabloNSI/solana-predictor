@@ -9,20 +9,21 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Ruta al modelo
+# Cargar modelo y scaler
 MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'models', 'rf_model_best.pkl')
+SCALER_PATH = os.path.join(os.path.dirname(__file__), '..', 'models', 'scaler.pkl')
 
-# Variable global para cargar el modelo solo una vez
 try:
     with open(MODEL_PATH, 'rb') as f:
         MODEL = pickle.load(f)
+    with open(SCALER_PATH, 'rb') as f:
+        SCALER = pickle.load(f)
     MODEL_LOADED = True
-    print("✅ Modelo cargado exitosamente")
+    print("Modelo y Scaler cargados exitosamente")
 except Exception as e:
     MODEL_LOADED = False
-    print(f"❌ Error cargando modelo: {e}")
-    MODEL = None
-
+    SCALER = None
+    print(f"Error cargando modelo o scaler: {e}")
 class handler(BaseHTTPRequestHandler):
     
     def _send_response(self, status_code, data):
@@ -48,11 +49,10 @@ class handler(BaseHTTPRequestHandler):
             "timestamp": datetime.now().isoformat()
         }
         self._send_response(200, response)
-    
-    def do_POST(self):
-        """Endpoint de predicción - VERSIÓN CORRECTA"""
-        if not MODEL_LOADED:
-            self._send_response(503, {"error": "Modelo no cargado en el servidor"})
+        def do_POST(self):
+            """Endpoint de predicción - VERSIÓN CORRECTA"""
+        if not MODEL_LOADED or SCALER is None:
+            self._send_response(503, {"error": "Modelo o Scaler no cargado"})
             return
         
         try:
@@ -61,38 +61,44 @@ class handler(BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             data = json.loads(post_data.decode('utf-8'))
             
-            # 2. VERIFICAR que vienen TODAS las features necesarias
-            required_features = ['close', 'volume', 'rsi', 'ma_7', 'ma_30']
+            # 2. USAR LAS FEATURES CORRECTAS DEL MODELO
+            required_features = ['Open', 'High', 'Low', 'Close', 'Volume', 'SMA20', 'SMA50', 'Volatility']
             
             # Comprobar que están todas las features
             missing_features = [feat for feat in required_features if feat not in data]
             if missing_features:
                 self._send_response(400, {
-                    "error": "Faltan features requeridas",
+                    "error": "Faltan datos requeridos para el modelo",
                     "missing": missing_features,
                     "required": required_features
                 })
                 return
             
-            # 3. Crear DataFrame con los valores que envía el usuario
+            # 3. Crear DataFrame en el ORDEN CORRECTO
             features = pd.DataFrame([[
-                data['close'],
-                data['volume'],
-                data['ma_7'],
-                data['ma_30']      
+                data['Open'],
+                data['High'],
+                data['Low'],
+                data['Close'],
+                data['Volume'],
+                data['SMA20'],
+                data['SMA50'],
+                data['Volatility']
             ]], columns=required_features)
             
-            # 4. Hacer predicción con datos REALES
-            prediction = MODEL.predict(features)[0]
+            # 4. ESCALAR los datos (IMPORTANTE)
+            features_scaled = SCALER.transform(features)
             
-            # 5. Respuesta exitosa
+            # 5. Hacer predicción
+            prediction = MODEL.predict(features_scaled)[0]
+            
+            # 6. Respuesta exitosa
             response = {
                 "success": True,
                 "prediction": float(prediction),
                 "model": "Random Forest",
                 "features_used": required_features,
-                "timestamp": datetime.now().isoformat(),
-                "note": "Predicción basada en datos reales proporcionados"
+                "timestamp": datetime.now().isoformat()
             }
             
             self._send_response(200, response)
