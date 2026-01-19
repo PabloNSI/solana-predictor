@@ -50,26 +50,54 @@ streamlit run app.py
 
 ## 📊 Estructura del Proyecto
 
-```bash
+```text
 solana-predictor/
-├── app.py                    # Aplicación Streamlit
-├── src/
-│   ├── data_handler.py      # Carga datos
-│   ├── nlp_parser.py        # Parser NLP
-│   ├── predictor.py         # Modelos
-│   ├── indicators.py        # Indicadores técnicos
-│   └── visualizer.py        # Gráficas Plotly
+├── .gitignore
+├── .streamlit/
+│   └── config.toml
+├── ANALISIS.md
+├── ARCHITECTURE.md
+├── MODELO_SELECCIONADO.md
+├── README.md
+├── TECHNICAL_REPORT.md
+├── api/
+│   ├── feedback.py
+│   ├── health.py
+│   └── predict.py
+├── app.py
+├── config.py
+├── data/
+│   ├── features_prepared.csv
+│   └── sol_1d_data_2020_to_2025.csv
+├── models/
+│   ├── README_MODELS.md
+│   ├── lstm_model.h5
+│   ├── model.pkl
+│   ├── model_info.json
+│   ├── model_metrics.json
+│   ├── rf_model.pkl
+│   ├── rf_model_best.pkl
+│   └── scaler.pkl
 ├── notebooks/
 │   ├── 01_EDA_Solana.ipynb
 │   └── 02_Model_Training.ipynb
-├── models/
-│   ├── rf_model.pkl
-│   ├── lstm_model.h5
-│   └── scaler.pkl
-├── data/
-│   └── sol_1d_data_2020_to_2025.csv
-├── TECHNICAL_REPORT.md      # Memoria académica
-└── requirements.txt
+├── output/
+│   ├── LSTM_Training_Loss.png
+│   ├── error_analysis.png
+│   └── predictions_vs_actual.png
+├── requirements.txt
+├── run_tests.py
+├── scripts/
+│   ├── requirements.txt
+│   └── retrain.py
+├── src/
+│   ├── data_handler.py
+│   ├── indicators.py
+│   ├── nlp_parser.py
+│   ├── predictor.py
+│   └── visualizer.py
+├── tests/
+└── vercel.json
 ```
 
 ## 📈 Resultados
