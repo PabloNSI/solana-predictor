@@ -1,4 +1,3 @@
-
 import pickle
 import tensorflow as tf
 import numpy as np
@@ -15,7 +14,7 @@ def load_models(model_dir):
         return rf_model, lstm_model, scaler
     except FileNotFoundError:
         raise Exception("""
-        ❌ Modelos no encontrados.
+        Modelos no encontrados.
         Por favor, ejecuta primero los notebooks:
         - notebooks/01_EDA_Solana.ipynb
         - notebooks/02_Model_Training.ipynb
