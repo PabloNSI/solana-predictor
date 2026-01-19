@@ -45,8 +45,8 @@ venv.bak/
 *~
 
 # Modelos (opcionales, pesan mucho)
-models/*.h5
-models/*.pkl
+# models/*.h5
+# models/*.pkl
 *.joblib
 
 # Datos (puede ser grande)
