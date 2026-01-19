@@ -1,0 +1,43 @@
+# Directorios grandes con datos, modelos y notebooks
+data/
+notebooks/
+models/
+__pycache__/
+
+# Archivos de modelo y datos (pueden pesar cientos de MB)
+*.h5
+*.pkl
+*.pth
+*.pt
+*.joblib
+*.csv
+*.parquet
+*.feather
+
+# Entornos virtuales y cachés de Python
+venv/
+env/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Archivos de sistema y editores
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de configuración local
+.env
+.env.local
+*.log
+.ipynb_checkpoints/
+
+# Documentación y builds
+docs/
+dist/
+build/
+*.egg-info/
