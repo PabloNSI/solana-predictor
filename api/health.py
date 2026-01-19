@@ -1,12 +1,15 @@
-import datetime
+from http.server import BaseHTTPRequestHandler
 import json
+from datetime import datetime
 
-def handler(request):
-    return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'status': 'healthy',
-            'model_loaded': True,
-            'timestamp': datetime.now().isoformat()
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        response = json.dumps({
+            "status": "healthy",
+            "service": "solana-predictor-api",
+            "timestamp": datetime.now().isoformat()
         })
-    }
+        self.wfile.write(response.encode())
