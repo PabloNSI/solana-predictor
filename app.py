@@ -16,7 +16,6 @@ import config
 # Config página
 st.set_page_config(
     page_title="Solana Predictor",
-    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -38,7 +37,7 @@ st.markdown("""
 # ================================
 # SIDEBAR
 # ================================
-st.sidebar.title("📊 Solana Predictor")
+st.sidebar.title("Solana Predictor")
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
 **Versión:** 1.0
@@ -55,7 +54,7 @@ st.sidebar.markdown("""
 """)
 
 st.sidebar.markdown("---")
-st.sidebar.info("⚠️ **Disclaimer:** Este es un sistema educativo. No es asesoramiento financiero.")
+st.sidebar.info("**Disclaimer:** Este es un sistema educativo. No es asesoramiento financiero.")
 
 # ================================
 # MAIN CONTENT
@@ -82,13 +81,13 @@ if user_input:
             parsed = parse_command(user_input)
             
             if not parsed or parsed['confidence'] < 0.2:
-                st.error("❌ No entendí tu pregunta. Intenta con:")
+                st.error("No entendí tu pregunta. Intenta con:")
                 st.info("- 'Precio próximos 14 días'")
                 st.info("- 'Volumen en 2024'")
                 st.info("- 'RSI histórico'")
             else:
                 # 2. Cargar datos
-                st.write(f"📌 Buscando: **{parsed['metric'].upper()}** | Período: **{parsed['period']}**")
+                st.write(f"Buscando: **{parsed['metric'].upper()}** | Período: **{parsed['period']}**")
                 
                 df = load_data(config.DATA_FILE)
                 
@@ -111,7 +110,7 @@ if user_input:
                     # ==================
                     # PREDICCIÓN
                     # ==================
-                    st.subheader("🔮 Predicción")
+                    st.subheader("Predicción")
                     
                     with st.spinner("Cargando modelos..."):
                         rf_model, lstm_model, scaler = load_models(config.MODEL_PATH)
@@ -147,7 +146,7 @@ if user_input:
                     
                     # Gráficas según métrica
                     if parsed['metric'] == 'price':
-                        st.subheader("📈 Predicción de Precio")
+                        st.subheader("Predicción de Precio")
                         fig = plot_price_forecast(
                             data_range[['Open time', 'Close']].set_index('Open time'),
                             predictions
@@ -155,7 +154,7 @@ if user_input:
                         st.plotly_chart(fig, use_container_width=True)
                         
                         # Comparación modelos
-                        st.subheader("🔬 Comparación de Modelos")
+                        st.subheader("Comparación de Modelos")
                         fig_comp = plot_model_comparison(
                             predictions['rf'],
                             predictions['lstm'],
@@ -164,7 +163,7 @@ if user_input:
                         st.plotly_chart(fig_comp, use_container_width=True)
                     
                     elif parsed['metric'] == 'volume':
-                        st.subheader("📊 Predicción de Volumen")
+                        st.subheader("Predicción de Volumen")
                         fig = plot_volume_forecast(
                             data_range[['Open time', 'Volume']].set_index('Open time'),
                             predictions
@@ -175,7 +174,7 @@ if user_input:
                     # ==================
                     # INDICADORES TÉCNICOS
                     # ==================
-                    st.subheader("📉 Análisis Técnico")
+                    st.subheader("Análisis Técnico")
                     
                     closes = data_range['Close'].values
                     
@@ -224,7 +223,7 @@ if user_input:
                     # ==================
                     # ANÁLISIS HISTÓRICO
                     # ==================
-                    st.subheader("📚 Análisis Histórico")
+                    st.subheader("Análisis Histórico")
                     
                     col1, col2, col3, col4 = st.columns(4)
                     with col1:
@@ -255,7 +254,7 @@ if user_input:
                         st.plotly_chart(fig, use_container_width=True)
         
         except Exception as e:
-            st.error(f"❌ Error: {str(e)}")
+            st.error(f"Error: {str(e)}")
             st.info("Por favor, intenta de nuevo con una pregunta clara.")
 
 # ================================
@@ -265,6 +264,6 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: 0.8rem;'>
     <p>Solana Price Predictor | Proyecto Final Unit 25 Applied Machine Learning</p>
-    <p>⚠️ Sistema Educativo - No es Asesoramiento Financiero</p>
+    <p>Sistema Educativo - No es Asesoramiento Financiero</p>
 </div>
 """, unsafe_allow_html=True)

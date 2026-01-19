@@ -14,7 +14,7 @@ cd solana-predictor
 
 # Crear entorno virtual
 python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+source venv/bin/activate  # En Windows: .\venv\Scripts\Activate.ps1
 
 # Instalar dependencias
 pip install -r requirements.txt
