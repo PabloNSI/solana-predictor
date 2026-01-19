@@ -3,10 +3,6 @@
     {
       "src": "api/predict.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/next"
     }
   ],
   "routes": [
@@ -16,19 +12,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/$1",
+      "dest": "/",
       "continue": true
     }
-  ],
-  "env": {
-    "PYTHONPATH": "/var/task",
-    "MODEL_PATH": "/var/task/models/rf_model.pkl",
-    "SCALER_PATH": "/var/task/models/scaler.pkl"
-  },
-  "functions": {
-    "api/predict.py": {
-      "maxDuration": 10,
-      "memory": 1024
-    }
-  }
+  ]
 }

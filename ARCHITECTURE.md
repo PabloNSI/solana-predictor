@@ -33,3 +33,13 @@ The diagram illustrates how raw market data is ingested, processed, transformed 
 - Data caching mechanisms to reduce redundant computations
 - Batch processing of predictions for improved performance
 - Potential integration of a database to store historical predictions and results
+
+graph TD
+    A[Usuario] --> B[Streamlit App]
+    A --> C[API Vercel]
+    B --> D[Modelos Locales]
+    C --> E[Modelos en Cloud]
+    D --> F[Predicción]
+    E --> F
+    F --> G[Feedback System]
+    G --> H[Re-entrenamiento]

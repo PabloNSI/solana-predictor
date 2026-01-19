@@ -91,3 +91,6 @@ if __name__ == "__main__":
     result = handler(MockRequest())
     print("Prueba local exitosa:")
     print(json.dumps(json.loads(result['body']), indent=2))
+    
+    with open('model_metrics.json', 'r') as f:
+        metrics = json.load(f)
