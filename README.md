@@ -9,9 +9,7 @@ Este proyecto integra conocimientos del curso: teoría matemática, modelado en 
 **Fecha de entrega:** 20/01/2026  
 **Alumno:** Pablo Soto – Madrid
 
-## 🚀 Quick Start (Reproducibilidad del Proyecto)
-
-### 1. Instalación
+## Instalación
 
 ```bash
 # Clonar repositorio
@@ -29,6 +27,8 @@ pip install -r requirements.txt
 jupyter notebook Proyecto_Final_Unit25.ipynb
 ```
 
+## Estructura
+
 ```text
 solana-predictor/
 ├── .gitignore
@@ -43,12 +43,16 @@ solana-predictor/
 │
 ├── models/                      # Modelos entrenados + métricas
 │   ├── lstm_model.h5
+│   ├── lstm_model.keras
+│   ├── model.pkl
 │   ├── rf_model_best.pkl        # Versión seleccionada
+│   ├── rf_model.pkl
 │   └── scaler.pkl
 │
 ├── notebooks/                   # Notebooks de soporte (importados/referenciados en el principal)
 │   ├── 01_EDA_Solana.ipynb
-│   └── 02_Model_Training.ipynb
+│   ├── 02_Model_Training.ipynb
+│   └── model_info.json
 │
 ├── output/                      # Gráficos clave para storytelling
 │   ├── LSTM_Training_Loss.png
@@ -62,5 +66,9 @@ solana-predictor/
 │   ├── predictor.py
 │   └── visualizer.py
 │
-└── (Otros md antiguos movidos o integrados al notebook: ANALISIS.md, ARCHITECTURE.md, etc.)
+└── docs/
+    ├── ANALISIS.md
+    ├── ARCHITECTURE.md
+    ├── MODELO_SELECCIONADO.md
+    └── TECHNICAL_REPORT.md
 ```
