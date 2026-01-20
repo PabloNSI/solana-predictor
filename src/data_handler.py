@@ -1,14 +1,13 @@
-
-from turtle import st
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
-@st.cache_data
+# @st.cache_data   ← Comentado para evitar errores en Jupyter Notebook
 def load_data(filepath):
+
     """
     Carga CSV histórico de Solana
-    Cachea el resultado para eficiencia
+    Cachea el resultado para eficiencia (solo en app Streamlit)
     """
     df = pd.read_csv(filepath)
     df['Open time'] = pd.to_datetime(df['Open time'])

@@ -1,124 +1,66 @@
+# Solana Price Predictor – Proyecto Final Unit 25
 
-# Solana Price Predictor
+Sistema de predicción de precios de **Solana (SOL)** usando **Random Forest** y **LSTM**, desarrollado como **proyecto final académico** para la asignatura **Unit 25: Applied Machine Learning** (Pearson HND PD Computer Science & AI / Data Science & AI).
 
-Sistema de predicción de precios Solana usando Machine Learning (Random Forest + LSTM) con interfaz Streamlit interactiva.
+**Entrega principal:** Jupyter Notebook interactivo `Proyecto_Final_Unit25.ipynb` (incluye introducción, objetivos, marco teórico, EDA, preprocesamiento, entrenamiento, evaluación crítica, mejora con IA generativa, visualizaciones, conclusiones, bibliografía Harvard y anexos).
 
-## 🚀 Quick Start
+Este proyecto integra conocimientos del curso: teoría matemática, modelado en Kaggle-style, análisis de errores y storytelling visual. Incluye una demo opcional con Streamlit para mostrar predicciones en producción.
+
+**Fecha de entrega:** 20/01/2026  
+**Alumno:** Pablo Soto – Madrid
+
+## 🚀 Quick Start (Reproducibilidad del Proyecto)
 
 ### 1. Instalación
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/tuusuario/solana-predictor.git
+git clone https://github.com/PabloNSI/solana-predictor.git
 cd solana-predictor
 
 # Crear entorno virtual
 python -m venv venv
-source venv/bin/activate  # En Windows: .\venv\Scripts\Activate.ps1
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # Instalar dependencias
 pip install -r requirements.txt
+
+# Abrir el notebook principal (entrega oficial)
+jupyter notebook Proyecto_Final_Unit25.ipynb
 ```
-
-### 2. Entrenar Modelos (Primero)
-
-```bash
-# Ejecutar notebooks (en orden)
-jupyter notebook notebooks/01_EDA_Solana.ipynb
-jupyter notebook notebooks/02_Model_Training.ipynb
-
-# Esto genera:
-# - models/rf_model.pkl
-# - models/lstm_model.h5
-# - models/scaler.pkl
-```
-
-### 3. Ejecutar Aplicación
-
-```bash
-streamlit run app.py
-```
-
-## 💬 Ejemplos de Comandos
-
-- "gráfico de precio próximos 14 días"
-- "volumen predicho en 2027"
-- "comparación RF vs LSTM"
-- "RSI histórico en 2023"
-- "volatilidad últimas 2 semanas"
-- "MACD en los próximos 30 días"
-
-## 📊 Estructura del Proyecto
 
 ```text
 solana-predictor/
 ├── .gitignore
-├── .streamlit/
-│   └── config.toml
-├── ANALISIS.md
-├── ARCHITECTURE.md
-├── MODELO_SELECCIONADO.md
 ├── README.md
-├── TECHNICAL_REPORT.md
-├── api/
-│   ├── feedback.py
-│   ├── health.py
-│   └── predict.py
-├── app.py
-├── config.py
-├── data/
-│   ├── features_prepared.csv
-│   └── sol_1d_data_2020_to_2025.csv
-├── models/
-│   ├── README_MODELS.md
+├── requirements.txt
+│
+├── Proyecto_Final_Unit25.ipynb  # ★ Entrega principal – Notebook interactivo Unit 25
+│
+├── data/                        # Datos para EDA y entrenamiento
+│   ├── sol_1d_data_2020_to_2025.csv
+│   └── features_prepared.csv
+│
+├── models/                      # Modelos entrenados + métricas
 │   ├── lstm_model.h5
-│   ├── model.pkl
-│   ├── model_info.json
-│   ├── model_metrics.json
-│   ├── rf_model.pkl
-│   ├── rf_model_best.pkl
+│   ├── rf_model_best.pkl        # Versión seleccionada
 │   └── scaler.pkl
-├── notebooks/
+│
+├── notebooks/                   # Notebooks de soporte (importados/referenciados en el principal)
 │   ├── 01_EDA_Solana.ipynb
 │   └── 02_Model_Training.ipynb
-├── output/
+│
+├── output/                      # Gráficos clave para storytelling
 │   ├── LSTM_Training_Loss.png
-│   ├── error_analysis.png
-│   └── predictions_vs_actual.png
-├── requirements.txt
-├── run_tests.py
-├── scripts/
-│   ├── requirements.txt
-│   └── retrain.py
-├── src/
+│   ├── predictions_vs_actual.png
+│   └── error_analysis.png
+│
+├── src/                         # Módulos reutilizables (usados en notebook y app)
 │   ├── data_handler.py
 │   ├── indicators.py
-│   ├── nlp_parser.py
+│   ├── nlp_parser.py            # Soporte IA generativa (sentiment, etc.)
 │   ├── predictor.py
 │   └── visualizer.py
-├── tests/
-└── vercel.json
+│
+└── (Otros md antiguos movidos o integrados al notebook: ANALISIS.md, ARCHITECTURE.md, etc.)
 ```
-
-## 📈 Resultados
-
-- **Random Forest R² Score:** 0.72
-- **LSTM R² Score:** 0.76
-- **Ensemble Accuracy:** 62%
-- **Dataset:** 1,877 días (2020-2025)
-
-## ⚠️ Disclaimer
-
-Este es un **sistema educativo**. No es asesoramiento financiero.
-
-Las predicciones se basan en patrones históricos y NO garantizan resultados futuros.
-
-## 📚 Documentación
-
-- Ver `TECHNICAL_REPORT.md` para análisis completo
-- Ver `ARCHITECTURE.md` para detalles técnicos
-
-## 👤 Pablo Soto
-
-Proyecto Final Unit 25: Applied Machine Learning
-Pearson HND - Computer Science & AI/Data Science

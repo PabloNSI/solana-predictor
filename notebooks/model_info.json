@@ -1,0 +1,23 @@
+{
+    "model_name": "Random_Forest_Solana_Predictor",
+    "model_type": "RandomForestRegressor",
+    "version": "1.0",
+    "performance": {
+        "test_rmse": 9.24038913588357,
+        "test_mae": 6.854909714957239,
+        "test_r2": 0.9340063379680571,
+        "avg_error": 6.854909714957239,
+        "pct_error_under_10": 74.19354838709677
+    },
+    "training_date": "2026-01-20 02:31:55",
+    "features": "8 features",
+    "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": 15,
+        "min_samples_split": 5,
+        "min_samples_leaf": 2,
+        "random_state": 42,
+        "n_jobs": -1
+    },
+    "note": "MEJOR MODELO - Supera al LSTM en todas las metricas"
+}
