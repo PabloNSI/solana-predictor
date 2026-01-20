@@ -3,13 +3,13 @@
     "model_type": "RandomForestRegressor",
     "version": "1.0",
     "performance": {
-        "test_rmse": 9.240389135883559,
-        "test_mae": 6.854909714957231,
+        "test_rmse": 9.240389135883564,
+        "test_mae": 6.854909714957235,
         "test_r2": 0.9340063379680572,
-        "avg_error": 6.854909714957231,
+        "avg_error": 6.854909714957235,
         "pct_error_under_10": 74.19354838709677
     },
-    "training_date": "2026-01-20 10:53:38",
+    "training_date": "2026-01-20 13:22:32",
     "features": "8 features",
     "hyperparameters": {
         "n_estimators": 100,
