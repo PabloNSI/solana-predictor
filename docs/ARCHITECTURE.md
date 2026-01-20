@@ -9,7 +9,7 @@ The diagram illustrates how raw market data is ingested, processed, transformed 
 ## Technology Stack
 
 - Backend: Python 3.9 or higher
-- Web interface: Streamlit
+- Web interface: Streamlit (demo opcional)
 - Machine Learning: scikit-learn, TensorFlow, Keras
 - Visualization: Plotly, Matplotlib
 - Data processing: Pandas, NumPy
@@ -22,8 +22,8 @@ The diagram illustrates how raw market data is ingested, processed, transformed 
 2. Combination of Random Forest and LSTM models  
    The use of both models allows capturing complementary patterns, combining non-linear regression with temporal dependency modeling.
 
-3. No external APIs  
-   The system avoids reliance on third-party APIs to ensure full reproducibility and offline execution.
+3. No external APIs (por ahora)  
+   The system evita dependencia en APIs externas para asegurar reproducibilidad y ejecución offline. La exposición vía API o despliegue en cloud es una posible evolución.
 
 4. Use of pre-trained models  
    Models are trained offline and loaded at runtime, enabling fast inference and reduced computational overhead.
@@ -36,10 +36,9 @@ The diagram illustrates how raw market data is ingested, processed, transformed 
 
 graph TD
     A[Usuario] --> B[Streamlit App]
-    A --> C[API Vercel]
     B --> D[Modelos Locales]
-    C --> E[Modelos en Cloud]
     D --> F[Predicción]
-    E --> F
     F --> G[Feedback System]
     G --> H[Re-entrenamiento]
+
+Nota: La arquitectura actual del repositorio incluye una demo/visualizador local (Streamlit) y modelos serializados en `models/`. La integración con APIs externas o despliegue en cloud (Vercel u otros) se considera una posible extensión, no una implementación actual en este repo.

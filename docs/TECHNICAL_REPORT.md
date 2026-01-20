@@ -1,254 +1,157 @@
-# Technical Report: Solana Price Prediction System
+# Informe Técnico: Sistema de Predicción de Precio de Solana (SOL)
 
-## Abstract
+Fecha del documento: 2026-01-20  
+Autor: Pablo Soto (PabloNSI)
 
-This section provides a summary of approximately 150 words.  
-It should include the problem context, the methodology employed (Random Forest and LSTM), the dataset used, the main evaluation metrics, and the key conclusions.
+## Resumen ejecutivo (Abstract)
 
----
-
-## 1. Introduction
-
-This section has an approximate length of two pages.
-
-### Context
-
-- Analysis of cryptocurrencies as highly volatile financial assets
-- Importance of forecasting in digital markets
-- Relevance of Solana within the blockchain ecosystem
-
-### Problem Statement
-
-- Difficulty of predicting financial prices
-- High non-stationarity and volatility
-- Limitations of traditional models
-
-### Objectives
-
-- Build a predictive system based on Machine Learning
-- Compare non-linear models and sequential models
-- Evaluate predictive capacity under different market scenarios
-
-### Contributions
-
-- End-to-end financial data pipeline
-- Comparison between Random Forest and LSTM models
-- Honest critical analysis of limitations
-- Reproducible and extensible system
+Este informe describe un sistema reproducible para predecir el precio de cierre diario de Solana (SOL/USDT) usando ingeniería de features y modelos de Machine Learning. Se experimentó con dos enfoques principales: Random Forest (modelo final) y redes LSTM. El pipeline ingiere datos OHLCV históricos de Binance, aplica limpieza y construcción de indicadores técnicos (RSI, medias móviles, etc.), realiza una separación temporal entre entrenamiento y prueba y evalúa modelos mediante RMSE, MAE y R², además de métricas de dirección y consistencia. El Random Forest seleccionado (n_estimators=100, max_depth=15, min_samples_split=5, min_samples_leaf=2, random_state=42) alcanzó en test: MAE ≈ 6.85, RMSE ≈ 9.24 y R² ≈ 0.934 (ver `notebooks/model_info.json`). Con el dataset disponible (~1.877 observaciones diarias, 2020-08-11 a 2025-09-29) el enfoque basado en features y Random Forest supera al LSTM en generalización; se discuten limitaciones y vías de mejora.
 
 ---
 
-## 2. Related Work
+## 1. Objetivo
 
-This section has an approximate length of one and a half pages.
+Construir y evaluar un sistema reproducible que, a partir de históricos diarios de SOL/USDT, produzca predicciones del precio de cierre próximas en horizonte diario, comparando un modelo clásico de árboles (Random Forest) con un modelo secuencial (LSTM), y proponiendo la opción final para despliegue local.
 
-- State of the art in financial forecasting
-- Classical models: ARIMA, GARCH
-- Machine Learning applied to time series
-- Deep Learning in financial markets
-- Predictive systems in algorithmic trading
-- Differences with respect to previous work
+## 2. Resumen del conjunto de datos
 
----
+- Fuente: Binance (historical OHLCV).
+- Activo: SOL/USDT.
+- Periodo: 2020-08-11 — 2025-09-29.
+- Registros: 1.877 observaciones diarias.
+- Variables originales: Open, High, Low, Close, Volume.
+- Archivos relevantes: `data/sol_1d_data_2020_to_2025.csv`, `data/features_prepared.csv`.
 
-## 3. Dataset Description
+Consideraciones: los datos se trabajan en series temporales diarias; no se han incluido en el pipeline variables exógenas (noticias, sentimiento) en esta versión.
 
-This section has an approximate length of one page.
+## 3. Pipeline de preprocesamiento y features
 
-- Source: Binance (historical OHLCV data)
-- Asset: Solana (SOL/USDT)
-- Period: 2020-08-11 to 2025-09-29
-- Number of records: 1,877 daily observations
+3.1 Limpieza
 
-### Variables
+- Eliminación o imputación de valores nulos.
+- Verificación de duplicados y consistencia temporal.
 
-| Field | Description |
-| ------ | ------------- |
-| Open | Opening price |
-| High | Maximum price |
-| Low | Minimum price |
-| Close | Closing price |
-| Volume | Traded volume |
+3.2 Ingeniería de features
 
-Additional considerations include data quality checks and the absence of exogenous variables such as news or sentiment indicators.
+- Indicadores técnicos calculados: RSI, medias móviles simples (SMA) y exponenciales (EMA), bandas, momentum, etc. (implementados en `src/indicators.py`).
+- Derivados: retornos diarios, volatilidad rolling, volumen normalizado.
 
----
+3.3 Escalado y particionado
 
-## 4. Exploratory Data Analysis
+- Escalado: StandardScaler (guardado para producción en `models/scaler.pkl`).
+- Split temporal train/test: 80/20 respetando orden cronológico para evitar contaminación futura.
 
-This section has an approximate length of three pages.
+3.4 Formatos de salida
 
-### Visualizations
+- Conjuntos listos para entrenamiento, validación y prueba, y tablas de predicción para análisis.
 
-- Figure 1: Historical price with simple moving averages (SMA)
-- Figure 2: Distribution of daily returns
-- Figure 3: Price–volume relationship
+## 4. Modelos y estrategia experimental
 
-### Key Statistics
+4.1 Modelos evaluados
 
-- Daily and annualized volatility
-- Average returns
-- Maximum drawdown
-- Price–volume correlation
+- Random Forest Regressor (Scikit-Learn) — modelo seleccionado para producción.
+- LSTM (TensorFlow / Keras) — experimento para comparar capacidad temporal.
 
-### Main Findings
+4.2 Hiperparámetros del modelo seleccionado
 
-- High volatility
-- Non-stationarity
-- Non-normal distribution
-- Presence of extreme events
+- Random Forest (mejor versión):
+  - n_estimators: 100
+  - max_depth: 15
+  - min_samples_split: 5
+  - min_samples_leaf: 2
+  - random_state: 42
+  - n_jobs: -1
+- Modelo guardado: `models/rf_model_best.pkl`.
+- Metadatos del entrenamiento: `notebooks/model_info.json` (fecha de entrenamiento incluida).
 
----
+4.3 Protocolo de evaluación
 
-## 5. System Architecture
+- Métricas principales: RMSE, MAE, R².
+- Métricas adicionales: exactitud direccional (signo del cambio), porcentaje de predicciones con error absoluto < $10.
+- Curvas de entrenamiento y análisis de errores (guardados en `output/`).
 
-This section has an approximate length of two pages.
+## 5. Resultados principales
 
-### General Architecture
+- Random Forest (test):
+  - RMSE ≈ 9.2404
+  - MAE ≈ 6.8549
+  - R² ≈ 0.9340
+  - % predicciones con error < $10 ≈ 74.19%
+- Fuente de métricas: `notebooks/model_info.json` (training_date: 2026-01-20 13:22:32).
+- Interpretación: el Random Forest, con features técnicos, generaliza bien sobre el conjunto de prueba; su R² alto indica que explica gran parte de la varianza en el periodo evaluado.
+- Comparación con LSTM: con el volumen de datos disponible, el LSTM mostró mayor error y tendencia a overfitting en los experimentos realizados; por tanto, no se seleccionó para producción.
 
-- End-to-end data flow
-- Separation between EDA, training, and evaluation stages
+## 6. Análisis crítico y limitaciones
 
-### Technology Stack
+- Volumen de datos: ~1.877 observaciones diarias es relativamente limitado para redes recurrentes profundas; favorece modelos no paramétricos como RF cuando se dispone de features relevantes.
+- Ausencia de variables exógenas: noticias, sentimiento, órdenes en libro y macrofactores no se modelaron; su inclusión puede mejorar la capacidad predictiva.
+- Horizonte de predicción: modelo enfocado en predicción diaria de cierre; rendimiento puede variar en horizontes intradiarios o multidiarios.
+- Riesgo de look-ahead o sesgo temporal: mitigado con split temporal, pero es crítico mantener disciplina experimental en futuras pruebas.
+- Robustez en regímenes extremos: eventos "black swan" no predictibles por datos históricos; el modelo puede fallar en periodos de shocks.
 
-- Python
-- Pandas, NumPy
-- Scikit-learn
-- TensorFlow / Keras
-- Matplotlib
+## 7. Despliegue y reproducibilidad
 
-### Design Decisions
+- Notebook principal: `Proyecto_Final_Unit25.ipynb` contiene la narrativa, EDA y pasos reproducibles.
+- Código modular: funciones y utilidades en `src/` (`data_handler.py`, `indicators.py`, `predictor.py`, `visualizer.py`, `nlp_parser.py`).
+- Artefactos guardados:
+  - Modelos: `models/rf_model_best.pkl`, `models/rf_model.pkl`, `models/lstm_model.h5` (si aplicable).
+  - Escalador: `models/scaler.pkl`.
+  - Resultados: `notebooks/model_info.json`, gráficas en `output/`.
+- Despliegue actual: demo local basada en Streamlit (opcional). No hay API pública desplegada por defecto; despliegue en producción requiere:
+  - Contenerización (Docker),
+  - Orquestación o servicio web (FastAPI/Flask),
+  - Monitorización de métricas y reentrenamiento automatizado.
 
-- Independent models
-- Model persistence
-- Feature scaling prior to training
+## 8. Recomendaciones y trabajo futuro
 
-### Scalability
+- Ampliar dataset: incluir datos intradiarios o extender periodo histórico si es posible.
+- Incorporar variables exógenas: feeds de noticias, sentimiento en redes sociales, métricas on-chain.
+- Pipeline de MLOps básico: monitorización de rendimiento y retraining programado cuando la performance decaiga.
+- Evaluar modelos probabilísticos o ensamblados (Gradient Boosting, Ensembles) y métodos de incertidumbre (intervalos de predicción).
+- Si se considera LSTM en el futuro: aumentar datos y aplicar regularización más agresiva, validación por ventana deslizante (time-series cross-validation).
 
-- Periodic retraining
-- Future integration into production environments
+## 9. Conclusiones
 
----
-
-## 6. Methodology
-
-This section has an approximate length of three pages.
-
-### 6.1 Data Preprocessing
-
-- Data cleaning
-- Feature engineering
-- Normalization using StandardScaler
-- Train/Test split (80/20 respecting temporal order)
-
-### 6.2 Models Implemented
-
-#### Random Forest
-
-- Justification: non-linear and robust model
-- Main hyperparameters
-- Advantages and limitations
-
-#### LSTM
-
-- Justification: ability to capture temporal dependencies
-- Network architecture
-- Training strategy
-- Early stopping
-
-### 6.3 Evaluation Metrics
-
-- RMSE
-- MAE
-- R²
-- Directional Accuracy
-- Approximate Sharpe Ratio
+El enfoque basado en ingeniería de features y Random Forest ofrece, con el dataset y configuración actual, el mejor balance entre precisión, velocidad y explicabilidad. Las métricas muestran que es un candidato válido para uso de investigación y prototipado; su robustez en producción dependerá de incorporar más datos y señal exógena, así como de un plan de monitorización y retraining.
 
 ---
 
-## 7. Results
+## Referencias y recursos del repositorio
 
-This section has an approximate length of four pages.
-
-- Comparative table of models
-- Metrics on training and test sets
-- LSTM training curves
-- Predictions versus actual values
-- Analysis by market regime
-- Analysis by volatility levels
+- Notebook principal: `Proyecto_Final_Unit25.ipynb`
+- Model info / métricas: `notebooks/model_info.json`
+- Código: `src/` (`data_handler.py`, `indicators.py`, `predictor.py`, `visualizer.py`, `nlp_parser.py`)
+- Modelos serializados: `models/` (`rf_model_best.pkl`, `scaler.pkl`, etc.)
+- Outputs: `output/` (gráficas y análisis visual)
+- README: resumen del proyecto y pasos de instalación
 
 ---
 
-## 8. Critical Analysis
+## Apéndices
 
-This section has an approximate length of three pages.
+Appendix A — Implementación y comandos para reproducir:
 
-### Why Does the Model Fail?
+- Crear entorno, instalar dependencias:
+  - `python -m venv venv && source venv/bin/activate`
+  - `pip install -r requirements.txt`
+- Ejecutar notebook: `jupyter notebook Proyecto_Final_Unit25.ipynb`
+- Cargar modelo en Python (ejemplo):
 
-- Efficient market hypothesis
-- Unmodeled exogenous events
-- Regime changes
-- Non-stationary data
+```python
+import joblib
+rf = joblib.load("models/rf_model_best.pkl")
+scaler = joblib.load("models/scaler.pkl")
+```
 
-### When Does It Work Well?
+Appendix B — Ubicación de código clave:
 
-- Periods of low volatility
-- Clear trends
-- Price consolidation phases
+- Preprocesamiento e ingreso: `src/data_handler.py`
+- Indicadores técnicos: `src/indicators.py`
+- Entrenamiento y predicción: `src/predictor.py`
+- Visualización: `src/visualizer.py`
 
-### Limitations
+Appendix C — Metadatos de entrenamiento
 
-- Limited dataset (~5 years)
-- Insufficient variables
-- Risk of overfitting
-- Forward-looking bias
+- Ver `notebooks/model_info.json` para fecha, métricas exactas y hiperparámetros usados durante el experimento final.
 
----
-
-## 9. Deployment and Production
-
-This section has an approximate length of one page.
-
-- Model serialization
-- Prediction latency
-- Performance monitoring
-- Retraining strategy
-
----
-
-## 10. Conclusions
-
-This section has an approximate length of one and a half pages.
-
-- Main findings
-- Technical lessons learned
-- Feasibility of the approach
-- Real-world applicability
-- Future work
-
----
-
-## 11. References
-
-### Harvard Reference Format
-
-At least 20 academic references, including journal articles, books, and conference papers.
-
----
-
-## Appendices
-
-### Appendix A: Complete Model Code
-
-- Full Random Forest implementation
-- Full LSTM implementation
-
-### Appendix B: Hyperparameter Tuning
-
-- Parameter justification
-- Discarded experiments
-
-### Appendix C: Full Predictions Table
-
-- Complete prediction results
-- Comparison with actual values
+(El contenido de este informe está pensado para ser conciso y operativo; si deseas, puedo expandir cualquiera de las secciones —p. ej. EDA, metodología detallada o resultados con tablas y gráficos— y añadir los extractos de código y figuras correspondientes.)
