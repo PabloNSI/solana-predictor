@@ -72,3 +72,17 @@ solana-predictor/
     ├── MODELO_SELECCIONADO.md
     └── TECHNICAL_REPORT.md
 ```
+
+## APP
+
+### REPOSITORIO
+
+```bash
+https://github.com/PabloNSI/solana-predictor-app.git
+```
+
+### VERCEL APP
+
+```bash
+https://solana-predictor-app.vercel.app/
+```
